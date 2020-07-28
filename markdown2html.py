@@ -19,7 +19,7 @@ if __name__ == '__main__':
 
     with open(sys.argv[1]) as r:
         with open(sys.argv[2], 'w') as w:
-            unordered_start, ordered_start = False, False
+            unordered_start, ordered_start, paragraph = False, False, False
             for line in r:
                 length = len(line)
                 headings = line.lstrip('#')
@@ -48,7 +48,17 @@ if __name__ == '__main__':
                 if ordered_start and not ordered_count:
                     w.write('</ol>\n')
                     ordered_start = False
-                w.write(line)
+                if not (heading_count or unordered_start or ordered_start):
+                    if not paragraph and length > 1:
+                        w.write('<p>\n')
+                        paragraph = True
+                    elif length > 1:
+                        w.write('<br/>\n')
+                    elif paragraph:
+                        w.write('</p>\n')
+                        paragraph = False
+                if length > 1:
+                    w.write(line)
             if unordered_start:
                 w.write('</ul>\n')
             if ordered_start:
