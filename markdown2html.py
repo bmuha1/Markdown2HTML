@@ -23,9 +23,8 @@ if __name__ == '__main__':
                 count = len(line) - len(line.lstrip('#'))
                 if 1 <= count <= 6:
                     line = line.lstrip('#')
-                    line = line.rstrip()
                     line = '<h{}>'.format(
-                        count) + line.lstrip() + '</h{}>'.format(count) + '\n'
+                        count) + line.strip() + '</h{}>'.format(count) + '\n'
                 w.write(line)
 
     exit(0)
