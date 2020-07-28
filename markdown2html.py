@@ -19,12 +19,26 @@ if __name__ == '__main__':
 
     with open(sys.argv[1]) as r:
         with open(sys.argv[2], 'w') as w:
+            unordered_start = False
             for line in r:
-                count = len(line) - len(line.lstrip('#'))
-                if 1 <= count <= 6:
-                    line = line.lstrip('#')
+                headings = line.lstrip('#')
+                heading_count = len(line) - len(headings)
+                unordered = line.lstrip('-')
+                unordered_count = len(line) - len(unordered)
+                if 1 <= heading_count <= 6:
                     line = '<h{}>'.format(
-                        count) + line.strip() + '</h{}>'.format(count) + '\n'
+                        heading_count) + headings.strip() + '</h{}>\n'.format(
+                        heading_count)
+                if unordered_count:
+                    if not unordered_start:
+                        w.write('<ul>\n')
+                        unordered_start = True
+                    line = '<li>' + unordered.strip() + '</li>\n'
+                if unordered_start and not unordered_count:
+                    w.write('</ul>\n')
+                    unordered_start = False
                 w.write(line)
+            if unordered_start:
+                w.write('</ul>\n')
 
     exit(0)
