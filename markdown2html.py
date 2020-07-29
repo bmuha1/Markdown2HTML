@@ -21,6 +21,10 @@ if __name__ == '__main__':
         with open(sys.argv[2], 'w') as w:
             unordered_start, ordered_start, paragraph = False, False, False
             for line in r:
+                line = line.replace('**', '<b>', 1)
+                line = line.replace('**', '</b>', 1)
+                line = line.replace('__', '<em>', 1)
+                line = line.replace('__', '</em>', 1)
                 length = len(line)
                 headings = line.lstrip('#')
                 heading_count = length - len(headings)
@@ -28,6 +32,7 @@ if __name__ == '__main__':
                 unordered_count = length - len(unordered)
                 ordered = line.lstrip('*')
                 ordered_count = length - len(ordered)
+
                 if 1 <= heading_count <= 6:
                     line = '<h{}>'.format(
                         heading_count) + headings.strip() + '</h{}>\n'.format(
@@ -63,5 +68,7 @@ if __name__ == '__main__':
                 w.write('</ul>\n')
             if ordered_start:
                 w.write('</ol>\n')
+            if paragraph:
+                w.write('</p>\n')
 
     exit(0)
