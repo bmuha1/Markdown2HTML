@@ -7,6 +7,8 @@ The second is the output file name.
 
 import sys
 import os.path
+import re
+import hashlib
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
@@ -25,6 +27,19 @@ if __name__ == '__main__':
                 line = line.replace('**', '</b>', 1)
                 line = line.replace('__', '<em>', 1)
                 line = line.replace('__', '</em>', 1)
+
+                md5 = re.findall(r'\[\[.+?\]\]', line)
+                md5_inside = re.findall(r'\[\[(.+?)\]\]', line)
+                if md5:
+                    line = line.replace(md5[0], hashlib.md5(
+                        md5_inside[0].encode()).hexdigest())
+
+                remove_c = re.findall(r'\(\(.+?\)\)', line)
+                if remove_c:
+                    line = line.replace('((', '')
+                    line = line.replace('))', '')
+                    line = ''.join(c for c in line if c not in 'Cc')
+
                 length = len(line)
                 headings = line.lstrip('#')
                 heading_count = length - len(headings)
@@ -37,6 +52,7 @@ if __name__ == '__main__':
                     line = '<h{}>'.format(
                         heading_count) + headings.strip() + '</h{}>\n'.format(
                         heading_count)
+
                 if unordered_count:
                     if not unordered_start:
                         w.write('<ul>\n')
@@ -45,6 +61,7 @@ if __name__ == '__main__':
                 if unordered_start and not unordered_count:
                     w.write('</ul>\n')
                     unordered_start = False
+
                 if ordered_count:
                     if not ordered_start:
                         w.write('<ol>\n')
@@ -53,6 +70,7 @@ if __name__ == '__main__':
                 if ordered_start and not ordered_count:
                     w.write('</ol>\n')
                     ordered_start = False
+
                 if not (heading_count or unordered_start or ordered_start):
                     if not paragraph and length > 1:
                         w.write('<p>\n')
@@ -64,6 +82,7 @@ if __name__ == '__main__':
                         paragraph = False
                 if length > 1:
                     w.write(line)
+
             if unordered_start:
                 w.write('</ul>\n')
             if ordered_start:
