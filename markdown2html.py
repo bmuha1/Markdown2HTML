@@ -38,7 +38,7 @@ if __name__ == '__main__':
                 if remove_c:
                     line = line.replace('((', '')
                     line = line.replace('))', '')
-                    line = ''.join(c for c in line if c not in 'Cc') + '\n'
+                    line = ''.join(c for c in line if c not in 'Cc')
 
                 length = len(line)
                 headings = line.lstrip('#')
