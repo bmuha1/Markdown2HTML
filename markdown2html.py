@@ -35,10 +35,11 @@ if __name__ == '__main__':
                         md5_inside[0].encode()).hexdigest())
 
                 remove_c = re.findall(r'\(\(.+?\)\)', line)
+                remove_c_inside = re.findall(r'\(\((.+?)\)\)', line)
                 if remove_c:
-                    line = line.replace('((', '')
-                    line = line.replace('))', '')
-                    line = ''.join(c for c in line if c not in 'Cc')
+                    remove_c_inside = ''.join(
+                        c for c in remove_c_inside[0] if c not in 'Cc')
+                    line = line.replace(remove_c[0], remove_c_inside)
 
                 length = len(line)
                 headings = line.lstrip('#')
